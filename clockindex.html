@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: transparent;
+            font-family: 'Inter', 'Georgia', serif;
+            overflow: hidden; /* Prevents scrollbars on small screens */
+        }
+
+        .clock-container {
+            position: relative;
+            /* Scale based on the smaller side of the screen */
+            width: 90vw; 
+            height: 90vw;
+            max-width: 350px;
+            max-height: 350px;
+        }
+
+        .clock {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            /* Relative border size looks better when shrinking */
+            border: 2vw solid #202122; 
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* Desktop border limit */
+        @media (min-width: 400px) {
+            .clock { border-width: 8px; }
+        }
+
+        /* Center Pin */
+        .clock::after {
+            content: '';
+            position: absolute;
+            width: 3%;
+            height: 3%;
+            background: #202122;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        /* Responsive Roman Numerals */
+        .number {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            /* Use clamp to keep text readable but scaling */
+            font-size: clamp(1rem, 5vw, 1.5rem);
+            font-weight: 900;
+            color: #202122;
+            padding: 5%;
+        }
+
+        /* Positioning Logic */
+        .n1 { transform: rotate(30deg); } .n1 span { transform: rotate(-30deg); display: block; }
+        .n2 { transform: rotate(60deg); } .n2 span { transform: rotate(-60deg); display: block; }
+        .n3 { transform: rotate(90deg); } .n3 span { transform: rotate(-90deg); display: block; }
+        .n4 { transform: rotate(120deg); } .n4 span { transform: rotate(-120deg); display: block; }
+        .n5 { transform: rotate(150deg); } .n5 span { transform: rotate(-150deg); display: block; }
+        .n6 { transform: rotate(180deg); } .n6 span { transform: rotate(-180deg); display: block; }
+        .n7 { transform: rotate(210deg); } .n7 span { transform: rotate(-210deg); display: block; }
+        .n8 { transform: rotate(240deg); } .n8 span { transform: rotate(-240deg); display: block; }
+        .n9 { transform: rotate(270deg); } .n9 span { transform: rotate(-270deg); display: block; }
+        .n10 { transform: rotate(300deg); } .n10 span { transform: rotate(-300deg); display: block; }
+        .n11 { transform: rotate(330deg); } .n11 span { transform: rotate(-330deg); display: block; }
+        .n12 { transform: rotate(0deg); }
+
+        /* Hands */
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom;
+            border-radius: 10px;
+            z-index: 5;
+        }
+
+        .hour {
+            width: 1.8%;
+            height: 25%;
+            background: #202122;
+            transform: translateX(-50%);
+        }
+
+        .minute {
+            width: 1.2%;
+            height: 38%;
+            background: #54595d;
+            transform: translateX(-50%);
+        }
+
+        .second {
+            width: 0.6%;
+            height: 42%;
+            background: #007aff; /* Matched to your site's blue primary */
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="clock-container">
+        <div class="clock">
+            <div class="number n12"><span>XII</span></div>
+            <div class="number n1"><span>I</span></div>
+            <div class="number n2"><span>II</span></div>
+            <div class="number n3"><span>III</span></div>
+            <div class="number n4"><span>IV</span></div>
+            <div class="number n5"><span>V</span></div>
+            <div class="number n6"><span>VI</span></div>
+            <div class="number n7"><span>VII</span></div>
+            <div class="number n8"><span>VIII</span></div>
+            <div class="number n9"><span>IX</span></div>
+            <div class="number n10"><span>X</span></div>
+            <div class="number n11"><span>XI</span></div>
+
+            <div class="hand hour" id="hour"></div>
+            <div class="hand minute" id="minute"></div>
+            <div class="hand second" id="second"></div>
+        </div>
+    </div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const seconds = now.getSeconds();
+            const minutes = now.getMinutes();
+            const hours = now.getHours();
+
+            const secDeg = (seconds / 60) * 360;
+            const minDeg = ((minutes + seconds / 60) / 60) * 360;
+            const hourDeg = ((hours % 12 + minutes / 60) / 12) * 360;
+
+            document.getElementById('second').style.transform = `translateX(-50%) rotate(${secDeg}deg)`;
+            document.getElementById('minute').style.transform = `translateX(-50%) rotate(${minDeg}deg)`;
+            document.getElementById('hour').style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+</html>

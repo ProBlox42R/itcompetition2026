@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Римски цифри</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="header.js" defer></script>
+</head>
+<body>
+    <div class="wiki-container">
+        <site-header></site-header>
+
+
+<section class="hero-slider">
+    <div class="hero-track">
+        
+        <div class="hero-slide active">
+            <img src="images/roman.jpg">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1>История и правила</h1>
+            </div>
+        </div>
+
+        <div class="hero-slide">
+            <img src="images/Venice_clocktower_in_Piazza_San_Marco_(torre_dell'orologio)_clockface.jpg">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1>Класическият часовник</h1>
+            </div>
+        </div>
+
+        <div class="hero-slide">
+            <img src="images/building-287815_1920.jpg">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1>Вечното наследство</h1>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="hero-dots">
+        <button class="dot active"></button>
+        <button class="dot"></button>
+        <button class="dot"></button>
+    </div>
+</section>
+
+        <div class="main-grid">
+            <main class="card">
+                <article>
+                    <p><strong>Римските цифри</strong> са непозиционна бройна система, използвана в Древния Рим. Те са изградени от комбинации от букви от латинската азбука.</p>
+                    
+                    <img src="images/roman.jpg" 
+                        class="full-width-img lightbox-img" 
+                        alt="Roman Numerals Background">
+
+                    <h3>Основни символи</h3>
+                    <p>Системата разчита на седем базови знака:</p>
+                    <div class="symbol-grid">
+                        <div class="symbol-item"><strong>I</strong> 1</div>
+                        <div class="symbol-item"><strong>V</strong> 5</div>
+                        <div class="symbol-item"><strong>X</strong> 10</div>
+                        <div class="symbol-item"><strong>L</strong> 50</div>
+                        <div class="symbol-item"><strong>C</strong> 100</div>
+                        <div class="symbol-item"><strong>D</strong> 500</div>
+                        <div class="symbol-item"><strong>M</strong> 1000</div>
+                    </div>
+
+                    <h3 style="margin-top: 2rem;">Интерактивен Часовник</h3>
+                    <div style="display: flex; justify-content: center;">
+                        <iframe src="clockindex.html" class="responsive-iframe" scrolling="no" title="Clock widget"></iframe>
+                    </div>
+                </article>
+                
+            </main>
+
+            <aside class="card infobox">
+                <span class="infobox-title">Бързи факти</span>
+                <img src="images/ro3.jpg" alt="Таблица" style="width: 80%; margin: 0 auto 1rem;">
+                <hr style="margin: 1rem 0; border: none; border-top: 1px solid #f1f5f9;">
+                <p style="font-size: 0.9rem;"><strong>Тип:</strong> Непозиционна</p>
+                <p style="font-size: 0.9rem;"><strong>Произход:</strong> Етруски / Римски</p>
+                <p style="font-size: 0.9rem;"><strong>Основа:</strong> 10</p>
+            </aside>
+        </div>
+
+        <site-footer></site-footer>
+    </div>
+
+    <div id="image-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(8px); z-index: 2000; justify-content: center; align-items: center; cursor: zoom-out;">
+        <span style="position: absolute; top: 20px; right: 30px; color: white; font-size: 3rem; font-weight: bold; cursor: pointer;">&times;</span>
+        <img id="overlay-img" src="" style="max-width: 90%; max-height: 90%; border-radius: 15px; box-shadow: 0 0 50px rgba(0,0,0,0.5); transform: scale(0.9); transition: transform 0.3s ease;">
+    </div>
+    <script>
+        // Lightbox for any image with .lightbox-img
+        const overlay = document.getElementById('image-overlay');
+        const overlayImg = document.getElementById('overlay-img');
+        document.querySelectorAll('img').forEach(img => {
+            img.classList.add('lightbox-img');
+            img.style.cursor = 'zoom-in';
+            img.addEventListener('click', () => {
+                if (!img.src) return;
+                overlayImg.src = img.src;
+                overlay.style.display = 'flex';
+                overlayImg.style.transform = 'scale(1)';
+            });
+        });
+        overlay.onclick = function() {
+            this.style.display = 'none';
+            overlayImg.style.transform = 'scale(0.9)';
+        };
+
+        // Hero slider auto + dots
+        // Hero slider (guarded for index only)
+        const slides = document.querySelectorAll('.hero-slide');
+        const dots = document.querySelectorAll('.hero-dots .dot');
+        if (slides.length && dots.length) {
+            let slideIndex = 0;
+            const goToSlide = (i) => {
+                slideIndex = i;
+                slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+                dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+            };
+            dots.forEach((dot, idx) => dot.addEventListener('click', () => goToSlide(idx)));
+            goToSlide(0);
+            setInterval(() => goToSlide((slideIndex + 1) % dots.length), 4500);
+        }
+    </script>
+</body>
+</html>

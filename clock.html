@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: transparent;
+            font-family: 'Georgia', serif;
+        }
+
+        .clock {
+            width: 350px;
+            height: 350px;
+            background: #fff;
+            border: 8px solid #202122;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Център на часовника */
+        .clock::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #202122;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        /* Римските цифри */
+        .number {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #202122;
+            padding: 15px;
+        }
+
+        /* Позициониране на всяка цифра */
+        .n1 { transform: rotate(30deg); } .n1 span { transform: rotate(-30deg); display: block; }
+        .n2 { transform: rotate(60deg); } .n2 span { transform: rotate(-60deg); display: block; }
+        .n3 { transform: rotate(90deg); } .n3 span { transform: rotate(-90deg); display: block; }
+        .n4 { transform: rotate(120deg); } .n4 span { transform: rotate(-120deg); display: block; }
+        .n5 { transform: rotate(150deg); } .n5 span { transform: rotate(-150deg); display: block; }
+        .n6 { transform: rotate(180deg); } .n6 span { transform: rotate(-180deg); display: block; }
+        .n7 { transform: rotate(210deg); } .n7 span { transform: rotate(-210deg); display: block; }
+        .n8 { transform: rotate(240deg); } .n8 span { transform: rotate(-240deg); display: block; }
+        .n9 { transform: rotate(270deg); } .n9 span { transform: rotate(-270deg); display: block; }
+        .n10 { transform: rotate(300deg); } .n10 span { transform: rotate(-300deg); display: block; }
+        .n11 { transform: rotate(330deg); } .n11 span { transform: rotate(-330deg); display: block; }
+        .n12 { transform: rotate(0deg); } .n12 span { transform: rotate(0deg); display: block; }
+
+        /* Стрелки */
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            z-index: 5;
+        }
+
+        .hour {
+            width: 6px;
+            height: 25%;
+            background: #202122;
+            margin-left: -3px;
+        }
+
+        .minute {
+            width: 4px;
+            height: 38%;
+            background: #54595d;
+            margin-left: -2px;
+        }
+
+        .second {
+            width: 2px;
+            height: 42%;
+            background: #d33;
+            margin-left: -1px;
+            border-radius: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="clock">
+        <div class="number n12"><span>XII</span></div>
+        <div class="number n1"><span>I</span></div>
+        <div class="number n2"><span>II</span></div>
+        <div class="number n3"><span>III</span></div>
+        <div class="number n4"><span>IV</span></div>
+        <div class="number n5"><span>V</span></div>
+        <div class="number n6"><span>VI</span></div>
+        <div class="number n7"><span>VII</span></div>
+        <div class="number n8"><span>VIII</span></div>
+        <div class="number n9"><span>IX</span></div>
+        <div class="number n10"><span>X</span></div>
+        <div class="number n11"><span>XI</span></div>
+
+        <div class="hand hour" id="hour"></div>
+        <div class="hand minute" id="minute"></div>
+        <div class="hand second" id="second"></div>
+    </div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const seconds = now.getSeconds();
+            const minutes = now.getMinutes();
+            const hours = now.getHours();
+
+            const secDeg = (seconds / 60) * 360;
+            const minDeg = ((minutes + seconds / 60) / 60) * 360;
+            const hourDeg = ((hours % 12 + minutes / 60) / 12) * 360;
+
+            document.getElementById('second').style.transform = `rotate(${secDeg}deg)`;
+            document.getElementById('minute').style.transform = `rotate(${minDeg}deg)`;
+            document.getElementById('hour').style.transform = `rotate(${hourDeg}deg)`;
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+</html>

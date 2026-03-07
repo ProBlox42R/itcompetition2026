@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="utf-8">
+    <title>Правила — Римски цифри</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="header.js" defer></script>
+</head>
+<body>
+
+    <div class="wiki-container">
+        <site-header></site-header>
+
+        <main>
+            <h1>Правила и Логика</h1>
+
+            <article class="rule-section">
+                <h3>Основни Принципи</h3>
+                <p style="margin-bottom: 1.5rem;">Изписването на римските цифри се базира на няколко фундаментални правила, които определят как се комбинират символите:</p>
+                <ul class="rule-list">
+                    <li><strong>Добавяне:</strong> Всеки символ отдясно на по-голям се прибавя (напр. VI = 5 + 1).</li>
+                    <li><strong>Изваждане:</strong> Всеки символ отляво на по-голям се изважда (напр. IV = 5 - 1).</li>
+                    <li><strong>Подредба:</strong> Първо се изписват хилядите, после стотиците, десетиците и накрая единиците.</li>
+                    <li><strong>Ограничения:</strong> Символ за 10x не може да стои пред символ, по-голям от 10x+1.</li>
+                </ul>
+                <img src="images/r3.png" alt="Таблица с правила" class="shrink">
+            </article>
+
+            <article class="rule-section">
+                <h3>Обхват и Числото 0</h3>
+                <p>Стандартната система позволява изписване на числата от <strong>1 до 3999</strong>. За по-големи стойности римляните са използвали хоризонтални черти над буквите (умножение по 1000).</p>
+                <p style="margin-top: 1rem;"><strong>Важно:</strong> Римляните не са имали цифра за 0. Това е основната причина системата им да не е позиционна и да бъде заменена от арабските цифри след 1400 г.</p>
+            </article>
+
+            <article class="rule-section">
+                <h3>Примери за Изчисление</h3>
+                <div class="example-box">
+                    XVI = 10 + 5 + 1 = <span>16</span><br>
+                    XIV = 10 — 1 + 5 = <span>14</span> (I се изважда от V)
+                </div>
+            </article>
+        </main>
+
+        <site-footer></site-footer>
+    </div>
+
+</body>
+</html>

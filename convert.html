@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="utf-8">
+    <title>Конвертор — Римски цифри</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="header.js" defer></script>
+</head>
+<body>
+    <div class="wiki-container">
+        <site-header></site-header>
+
+        <main class="content">
+            <div class="converter-section">
+                <h1 class="single">Конвертор</h1>
+                
+                <div class="input-group">
+                    <span class="label-text">Арабски числа</span>
+                    <input id="arabicInput" type="text" name="arabic" placeholder="Въведи арабски числа (напр. 2024)">
+                </div>
+
+                <div style="font-size: 2rem; margin: 1rem 0; color: #cbd5e1;">⇅</div>
+
+                <div class="input-group">
+                    <span class="label-text">Римски числа</span>
+                    <input id="romanInput" type="text" name="roma" placeholder="Въведи римски числа (напр. MMXXIV)">
+                </div>
+            </div>
+        </main>
+        
+        <site-footer></site-footer>
+    </div>
+
+    <script>
+    /**
+     * Roman Numeral Converter Logic
+     * Created for IT Olympiad 2026
+     */
+
+    const arabicInput = document.getElementById('arabicInput');
+    const romanInput = document.getElementById('romanInput');
+
+    const romanMatrix = [
+        [1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'],
+        [100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'],
+        [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']
+    ];
+
+    function toRoman(num) {
+        if (isNaN(num) || num <= 0) return '';
+        if (num > 3999) return 'Max 3999';
+        
+        let result = '';
+        for (const [val, char] of romanMatrix) {
+            while (num >= val) {
+                result += char;
+                num -= val;
+            }
+        }
+        return result;
+    }
+
+    function toArabic(roman) {
+        roman = roman.toUpperCase();
+        const map = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
+        let result = 0;
+        
+        for (let i = 0; i < roman.length; i++) {
+            const current = map[roman[i]];
+            const next = map[roman[i + 1]];
+            
+            if (next && next > current) {
+                result += (next - current);
+                i++;
+            } else {
+                result += current;
+            }
+        }
+        return isNaN(result) ? '' : result;
+    }
+
+    arabicInput.addEventListener('input', (e) => {
+        const value = parseInt(e.target.value);
+        if (!e.target.value) {
+            romanInput.value = '';
+            return;
+        }
+        romanInput.value = toRoman(value);
+    });
+
+    romanInput.addEventListener('input', (e) => {
+        let value = e.target.value.toUpperCase().replace(/[^IVXLCDM]/g, '');
+        e.target.value = value;
+        
+        if (!value) {
+            arabicInput.value = '';
+            return;
+        }
+        arabicInput.value = toArabic(value);
+    });
+    </script>
+</body>
+</html>

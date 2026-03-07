@@ -1,0 +1,8 @@
+RewriteEngine On
+
+# Не пренасочвай, ако файлът или папката съществуват реално
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Превърни всичко след наклонената черта в параметър ?page=
+RewriteRule ^([^/]+)/?$ index.php?page=$1 [L,QSA]

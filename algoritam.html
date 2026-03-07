@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="utf-8">
+    <title>Алгоритъм — Римски цифри</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="header.js" defer></script>
+</head>
+<body>
+
+    <div class="wiki-container">
+        <site-header></site-header>
+
+        <main>
+            <h1>Програмен Алгоритъм</h1>
+            
+            <article>
+                <h3>Арабски към Римски (JavaScript)</h3>
+                <p style="margin-bottom: 1rem; color: #64748b;">Логиката използва итерация през речник от стойности, като изважда най-голямата възможна цифра от числото.</p>
+                <pre>
+<span class="code-comment">// Арабски -> Римски</span>
+<span class="code-keyword">function</span> <span class="code-func">arabicToRoman</span>(number) {
+    <span class="code-keyword">let</span> roman = <span class="code-string">""</span>;
+    <span class="code-keyword">const</span> list = {M:<span class="code-number">1000</span>, CM:<span class="code-number">900</span>, D:<span class="code-number">500</span>, CD:<span class="code-number">400</span>, C:<span class="code-number">100</span>, XC:<span class="code-number">90</span>, L:<span class="code-number">50</span>, XL:<span class="code-number">40</span>, X:<span class="code-number">10</span>, IX:<span class="code-number">9</span>, V:<span class="code-number">5</span>, IV:<span class="code-number">4</span>, I:<span class="code-number">1</span>};
+
+    <span class="code-keyword">if</span> (number &lt; <span class="code-number">1</span> || number &gt; <span class="code-number">3999</span>) 
+        <span class="code-keyword">return</span> <span class="code-string">"Въведете число между 1 и 3999"</span>;
+
+    <span class="code-keyword">for</span> (<span class="code-keyword">let</span> key <span class="code-keyword">in</span> list) {
+        <span class="code-keyword">while</span> (number >= list[key]) {
+            roman += key;
+            number -= list[key];
+        }
+    }
+    <span class="code-keyword">return</span> roman;
+}</pre>
+            </article>
+
+            
+
+            <article>
+                <h3>Римски към Арабски (JavaScript)</h3>
+                <p style="margin-bottom: 1rem; color: #64748b;">Алгоритъмът проверява двойки символи (като IV или CM), за да определи дали трябва да събира или изважда стойностите.</p>
+                <pre>
+<span class="code-comment">// Римски -> Арабски</span>
+<span class="code-keyword">function</span> <span class="code-func">romanToArabic</span>(roman) {
+    roman = roman.toUpperCase();
+    <span class="code-keyword">const</span> values = {I:<span class="code-number">1</span>, V:<span class="code-number">5</span>, X:<span class="code-number">10</span>, L:<span class="code-number">50</span>, C:<span class="code-number">100</span>, D:<span class="code-number">500</span>, M:<span class="code-number">1000</span>};
+    <span class="code-keyword">let</span> result = <span class="code-number">0</span>;
+
+    <span class="code-keyword">for</span> (<span class="code-keyword">let</span> i = <span class="code-number">0</span>; i &lt; roman.length; i++) {
+        <span class="code-keyword">let</span> cur = values[roman[i]];
+        <span class="code-keyword">let</span> next = values[roman[i+1]];
+
+        <span class="code-keyword">if</span> (next > cur) {
+            result += (next - cur);
+            i++;
+        } <span class="code-keyword">else</span> {
+            result += cur;
+        }
+    }
+    <span class="code-keyword">return</span> result;
+}</pre>
+            </article>
+        </main>
+
+        <site-footer></site-footer>
+    </div>
+
+</body>
+</html>
