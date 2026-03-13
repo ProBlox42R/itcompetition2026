@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Тест – Римски цифри</title>
+
+<link rel="stylesheet" href="css/style.css">
+<script src="header.js" defer></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+</head>
+
+<body>
+
+<site-header></site-header>
+
+<div class="wiki-container">
+
+<h1 class="test-title">🏛 Тест: Римски цифри</h1>
+
+<!-- START SCREEN -->
+<div class="card start-card" id="startCard">
+
+<div class="input-group">
+
+<label class="label-text">Как да те наричаме?</label>
+<input id="playerName" type="text" placeholder="Напиши име">
+
+</div>
+
+<div id="welcomeBack"></div>
+
+<div class="level-grid">
+
+<button onclick="startTest(1)">📜 Ниво 1 – История</button>
+<button onclick="startTest(2)">🔢 Ниво 2 – Основи</button>
+<button onclick="startTest(3)">🧠 Ниво 3 – Смесени</button>
+<button onclick="startTest(4)">🔥 Ниво 4 – Трудно</button>
+
+</div>
+
+</div>
+
+
+<!-- TEST -->
+<div class="card" id="testCard" style="display:none">
+
+<p id="progress"></p>
+
+<div class="progress-bar">
+<div id="progressFill"></div>
+</div>
+
+<p id="skipCounter">Пропуснати: 0</p>
+
+<h2 id="question"></h2>
+
+<div class="input-group">
+<label class="label-text">Отговор</label>
+<input type="text" id="answer">
+</div>
+
+<div class="nav-buttons">
+
+<button onclick="prev()">Назад</button>
+<button onclick="next()">Напред</button>
+<button onclick="finish()">Завърши</button>
+
+</div>
+
+</div>
+
+
+<!-- RESULTS -->
+<div class="card result-card" id="resultCard" style="display:none">
+
+<h1 class="score-big" id="grade"></h1>
+
+<p class="score-message" id="scoreMessage"></p>
+
+<p id="score"></p>
+
+<hr>
+
+<h3>XP</h3>
+
+<div class="xp-bar">
+<div id="xpFill"></div>
+</div>
+
+<p id="xp"></p>
+<p id="tier"></p>
+
+<hr>
+
+<h3>Сподели резултата</h3>
+
+<div class="share-buttons">
+
+<button onclick="shareLink()">Копирай резултата</button>
+<button onclick="shareImage()">Изтегли снимка</button>
+
+</div>
+
+</div>
+
+</div>
+
+<site-footer></site-footer>
+
+<script>
+
+const TOTAL = 15
+
+let index = 0
+let answers = []
+let questions = []
+let correct = []
+let started = false
+let currentLevel = 1
+
+let xp = parseInt(localStorage.getItem("romanXP")) || 0
+
+const player = localStorage.getItem("romanPlayer")
+
+if(player){
+
+document.getElementById("welcomeBack").innerText =
+`Здравей ${player}! Готов ли си за още? 🚀`
+
+}
+
+function startTest(level){
+
+let name=document.getElementById("playerName").value.trim()
+
+if(name===""){
+
+if(player){
+
+name=player
+
+}else{
+
+alert("Моля въведи име")
+return
+
+}
+
+}
+
+localStorage.setItem("romanPlayer",name)
+
+currentLevel=level
+started=true
+
+answers=new Array(TOTAL).fill("")
+questions=[]
+correct=[]
+
+generate(level)
+
+document.getElementById("startCard").style.display="none"
+document.getElementById("testCard").style.display="block"
+
+show()
+
+}
+
+function toRoman(num){
+
+const map=[
+[1000,"M"],[900,"CM"],[500,"D"],[400,"CD"],
+[100,"C"],[90,"XC"],[50,"L"],[40,"XL"],
+[10,"X"],[9,"IX"],[5,"V"],[4,"IV"],[1,"I"]
+]
+
+let r=""
+
+for(let [v,s] of map){
+
+while(num>=v){
+r+=s
+num-=v
+}
+
+}
+
+return r
+
+}
+
+function generate(level){
+
+for(let i=0;i<TOTAL;i++){
+
+let n=Math.floor(Math.random()*200)+1
+let r=toRoman(n)
+
+if(level==1){
+
+const q=[
+"Коя цивилизация създава римските цифри?",
+"Коя буква означава 5?",
+"Коя буква означава 10?",
+"Коя буква означава 100?",
+"Коя буква означава 1000?"
+]
+
+const a=["Римската","V","X","C","M"]
+
+let id=Math.floor(Math.random()*q.length)
+
+questions.push(q[id])
+correct.push(a[id])
+
+}
+
+if(level==2){
+
+questions.push(`Напиши числото ${n} с римски цифри`)
+correct.push(r)
+
+}
+
+if(level==3){
+
+if(Math.random()<0.5){
+
+questions.push(`Кое число е ${r}?`)
+correct.push(String(n))
+
+}else{
+
+questions.push(`Напиши ${n} с римски цифри`)
+correct.push(r)
+
+}
+
+}
+
+if(level==4){
+
+let n2=n+Math.floor(Math.random()*5)+1
+let r2=toRoman(n2)
+
+questions.push(`Кое е по-голямо: ${r} или ${r2}?`)
+correct.push(r2)
+
+}
+
+}
+
+}
+
+function show(){
+
+document.getElementById("progress").innerText =
+`Въпрос ${index+1} / ${TOTAL}`
+
+document.getElementById("question").innerText =
+questions[index]
+
+document.getElementById("answer").value =
+answers[index]
+
+let percent=((index+1)/TOTAL)*100
+
+document.getElementById("progressFill").style.width=
+percent+"%"
+
+updateSkipped()
+
+}
+
+function saveAnswer(){
+
+answers[index]=
+document.getElementById("answer").value.trim()
+
+}
+
+function next(){
+
+saveAnswer()
+
+if(index<TOTAL-1){
+index++
+show()
+}
+
+}
+
+function prev(){
+
+saveAnswer()
+
+if(index>0){
+index--
+show()
+}
+
+}
+
+function updateSkipped(){
+
+let skipped=answers.filter(a=>a==="").length
+
+document.getElementById("skipCounter").innerText=
+"Пропуснати: "+skipped
+
+}
+
+function grade(score){
+
+if(score>=90)return 6
+if(score>=75)return 5
+if(score>=60)return 4
+if(score>=40)return 3
+return 2
+
+}
+
+function feedback(g){
+
+if(g==6)return "🌟 Отлично! Ти си експерт!"
+if(g==5)return "🔥 Много добре!"
+if(g==4)return "👍 Добра работа!"
+if(g==3)return "🙂 Може по-добре!"
+return "😅 Тренирай още!"
+
+}
+
+function tier(xp){
+
+if(xp<200)return "Bronze"
+if(xp<500)return "Silver"
+if(xp<1000)return "Gold"
+if(xp<2000)return "Diamond"
+return "Legend"
+
+}
+
+function finish(){
+
+saveAnswer()
+
+let right=0
+
+for(let i=0;i<TOTAL;i++){
+
+if(
+answers[i].toUpperCase()==
+correct[i].toUpperCase()
+){
+right++
+}
+
+}
+
+let percent=Math.round((right/TOTAL)*100)
+
+let g=grade(percent)
+
+let gained=right*10
+
+xp+=gained
+
+localStorage.setItem("romanXP",xp)
+
+document.getElementById("testCard").style.display="none"
+document.getElementById("resultCard").style.display="block"
+
+document.getElementById("grade").innerText=g
+document.getElementById("scoreMessage").innerText=feedback(g)
+
+document.getElementById("score").innerText=
+`Правилни: ${right} / ${TOTAL}`
+
+document.getElementById("xp").innerText=
+`XP: ${xp}`
+
+document.getElementById("tier").innerText=
+`Tier: ${tier(xp)}`
+
+let tierLevels=[0,200,500,1000,2000,5000]
+
+let next=tierLevels.find(v=>v>xp)
+
+let prev=tierLevels[tierLevels.indexOf(next)-1]||0
+
+let xpPercent=((xp-prev)/(next-prev))*100
+
+document.getElementById("xpFill").style.width=
+xpPercent+"%"
+
+alert(`🎉 Поздравления!
+Ти завърши Ниво ${currentLevel}!`)
+
+}
+
+function shareLink(){
+
+let grade=document.getElementById("grade").innerText
+
+navigator.clipboard.writeText(
+`Получих оценка ${grade} на теста за римски цифри!`
+)
+
+alert("Резултатът е копиран!")
+
+}
+
+function shareImage(){
+
+html2canvas(document.getElementById("resultCard"))
+.then(canvas=>{
+
+let link=document.createElement("a")
+
+link.download="roman-score.png"
+link.href=canvas.toDataURL()
+
+link.click()
+
+})
+
+}
+
+window.onbeforeunload=function(){
+
+if(started){
+return "Сигурен ли си че искаш да напуснеш теста?"
+}
+
+}
+
+</script>
+
+</body>
+</html>
