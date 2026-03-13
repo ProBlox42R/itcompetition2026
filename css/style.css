@@ -868,3 +868,261 @@ footer h4 { color: var(--accent); margin-bottom: 0.5rem; }
 /* Dark theme → show white logo */
 [data-theme="dark"] .logo-light { display: inline-block; }
 [data-theme="dark"] .logo-dark  { display: none; }
+/* ========================================
+   TEST PAGE — Римски цифри (append to style.css)
+   ======================================== */
+
+/* ── Title ── */
+.test-title {
+    font-size: clamp(1.5rem, 5vw, 2.2rem);
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 1.8rem;
+    letter-spacing: -0.5px;
+    color: var(--text);
+}
+
+/* ── Start card ── */
+.start-card { text-align: center; }
+
+#welcomeBack {
+    font-size: 1rem;
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    min-height: 1.5rem;
+}
+
+.level-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.level-grid button {
+    padding: 1rem 0.8rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border-radius: 16px;
+    border: 2px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.18s, box-shadow 0.2s;
+}
+
+.level-grid button:hover {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(0,122,255,0.22);
+}
+
+@media (max-width: 480px) { .level-grid { grid-template-columns: 1fr; } }
+
+/* ── Progress ── */
+#progress {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 0.6rem;
+}
+
+#progressFill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 999px;
+    transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+    width: 0%;
+}
+
+#skipCounter {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 1.2rem;
+}
+
+/* ── Question ── */
+#question {
+    font-size: clamp(1.1rem, 3vw, 1.35rem);
+    font-weight: 700;
+    line-height: 1.45;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+}
+
+/* ── Answer options ── */
+.answer-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.option {
+    padding: 0.85rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 14px;
+    border: 2px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    line-height: 1.35;
+    transition: border-color 0.18s, background 0.18s, transform 0.15s, box-shadow 0.18s;
+    word-break: break-word;
+}
+
+.option:hover {
+    border-color: var(--primary);
+    background: rgba(0,122,255,0.06);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,122,255,0.14);
+}
+
+.option.selected {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(0,122,255,0.28);
+}
+
+[data-theme="dark"] .option.selected {
+    box-shadow: 0 6px 20px rgba(77,171,255,0.3);
+}
+
+@media (max-width: 480px) { .answer-options { grid-template-columns: 1fr; } }
+
+/* ── Nav buttons ── */
+.nav-buttons {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.nav-buttons button {
+    flex: 1;
+    min-width: 80px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.nav-buttons button:hover {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,122,255,0.22);
+}
+
+/* ── Result card ── */
+.result-card { text-align: center; }
+
+.score-big {
+    font-size: clamp(3.5rem, 14vw, 6rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 0.4rem;
+}
+
+.score-message {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.8rem;
+}
+
+.result-card hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.2rem 0;
+}
+
+.result-card h3 {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+}
+
+.result-card #score,
+.result-card #xp,
+.result-card #tier {
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+}
+
+/* ── XP bar ── */
+.xp-bar {
+    width: 100%;
+    height: 12px;
+    background: var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 0.6rem;
+}
+
+#xpFill {
+    height: 100%;
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    border-radius: 999px;
+    transition: width 0.7s cubic-bezier(0.4,0,0.2,1);
+    width: 0%;
+}
+
+/* ── Share buttons ── */
+.share-buttons {
+    display: flex;
+    gap: 0.7rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.share-buttons button {
+    padding: 0.75rem 1.4rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.share-buttons button:hover {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,122,255,0.22);
+}

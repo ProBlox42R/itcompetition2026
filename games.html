@@ -1,443 +1,574 @@
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Тест – Римски цифри</title>
-
-<link rel="stylesheet" href="css/style.css">
-<script src="header.js" defer></script>
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест – Римски цифри</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="header.js" defer></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
-
 <body>
-
-<site-header></site-header>
-
-<div class="wiki-container">
-
-<h1 class="test-title">🏛 Тест: Римски цифри</h1>
-
-<!-- START SCREEN -->
-<div class="card start-card" id="startCard">
-
-<div class="input-group">
-
-<label class="label-text">Как да те наричаме?</label>
-<input id="playerName" type="text" placeholder="Напиши име">
-
-</div>
-
-<div id="welcomeBack"></div>
-
-<div class="level-grid">
-
-<button onclick="startTest(1)">📜 Ниво 1 – История</button>
-<button onclick="startTest(2)">🔢 Ниво 2 – Основи</button>
-<button onclick="startTest(3)">🧠 Ниво 3 – Смесени</button>
-<button onclick="startTest(4)">🔥 Ниво 4 – Трудно</button>
-
-</div>
-
-</div>
-
-
-<!-- TEST -->
-<div class="card" id="testCard" style="display:none">
-
-<p id="progress"></p>
-
-<div class="progress-bar">
-<div id="progressFill"></div>
-</div>
-
-<p id="skipCounter">Пропуснати: 0</p>
-
-<h2 id="question"></h2>
-
-<div class="input-group">
-<label class="label-text">Отговор</label>
-<input type="text" id="answer">
-</div>
-
-<div class="nav-buttons">
-
-<button onclick="prev()">Назад</button>
-<button onclick="next()">Напред</button>
-<button onclick="finish()">Завърши</button>
-
-</div>
-
-</div>
-
-
-<!-- RESULTS -->
-<div class="card result-card" id="resultCard" style="display:none">
-
-<h1 class="score-big" id="grade"></h1>
-
-<p class="score-message" id="scoreMessage"></p>
-
-<p id="score"></p>
-
-<hr>
-
-<h3>XP</h3>
-
-<div class="xp-bar">
-<div id="xpFill"></div>
-</div>
-
-<p id="xp"></p>
-<p id="tier"></p>
-
-<hr>
-
-<h3>Сподели резултата</h3>
-
-<div class="share-buttons">
-
-<button onclick="shareLink()">Копирай резултата</button>
-<button onclick="shareImage()">Изтегли снимка</button>
-
-</div>
-
-</div>
-
-</div>
-
-<site-footer></site-footer>
-
-<script>
-
-const TOTAL = 15
-
-let index = 0
-let answers = []
-let questions = []
-let correct = []
-let started = false
-let currentLevel = 1
-
-let xp = parseInt(localStorage.getItem("romanXP")) || 0
-
-const player = localStorage.getItem("romanPlayer")
-
-if(player){
-
-document.getElementById("welcomeBack").innerText =
-`Здравей ${player}! Готов ли си за още? 🚀`
-
-}
-
-function startTest(level){
-
-let name=document.getElementById("playerName").value.trim()
-
-if(name===""){
-
-if(player){
-
-name=player
-
-}else{
-
-alert("Моля въведи име")
-return
-
-}
-
-}
-
-localStorage.setItem("romanPlayer",name)
-
-currentLevel=level
-started=true
-
-answers=new Array(TOTAL).fill("")
-questions=[]
-correct=[]
-
-generate(level)
-
-document.getElementById("startCard").style.display="none"
-document.getElementById("testCard").style.display="block"
-
-show()
-
-}
-
-function toRoman(num){
-
-const map=[
-[1000,"M"],[900,"CM"],[500,"D"],[400,"CD"],
-[100,"C"],[90,"XC"],[50,"L"],[40,"XL"],
-[10,"X"],[9,"IX"],[5,"V"],[4,"IV"],[1,"I"]
-]
-
-let r=""
-
-for(let [v,s] of map){
-
-while(num>=v){
-r+=s
-num-=v
-}
-
-}
-
-return r
-
-}
-
-function generate(level){
-
-for(let i=0;i<TOTAL;i++){
-
-let n=Math.floor(Math.random()*200)+1
-let r=toRoman(n)
-
-if(level==1){
-
-const q=[
-"Коя цивилизация създава римските цифри?",
-"Коя буква означава 5?",
-"Коя буква означава 10?",
-"Коя буква означава 100?",
-"Коя буква означава 1000?"
-]
-
-const a=["Римската","V","X","C","M"]
-
-let id=Math.floor(Math.random()*q.length)
-
-questions.push(q[id])
-correct.push(a[id])
-
-}
-
-if(level==2){
-
-questions.push(`Напиши числото ${n} с римски цифри`)
-correct.push(r)
-
-}
-
-if(level==3){
-
-if(Math.random()<0.5){
-
-questions.push(`Кое число е ${r}?`)
-correct.push(String(n))
-
-}else{
-
-questions.push(`Напиши ${n} с римски цифри`)
-correct.push(r)
-
-}
-
-}
-
-if(level==4){
-
-let n2=n+Math.floor(Math.random()*5)+1
-let r2=toRoman(n2)
-
-questions.push(`Кое е по-голямо: ${r} или ${r2}?`)
-correct.push(r2)
-
-}
-
-}
-
-}
-
-function show(){
-
-document.getElementById("progress").innerText =
-`Въпрос ${index+1} / ${TOTAL}`
-
-document.getElementById("question").innerText =
-questions[index]
-
-document.getElementById("answer").value =
-answers[index]
-
-let percent=((index+1)/TOTAL)*100
-
-document.getElementById("progressFill").style.width=
-percent+"%"
-
-updateSkipped()
-
-}
-
-function saveAnswer(){
-
-answers[index]=
-document.getElementById("answer").value.trim()
-
-}
-
-function next(){
-
-saveAnswer()
-
-if(index<TOTAL-1){
-index++
-show()
-}
-
-}
-
-function prev(){
-
-saveAnswer()
-
-if(index>0){
-index--
-show()
-}
-
-}
-
-function updateSkipped(){
-
-let skipped=answers.filter(a=>a==="").length
-
-document.getElementById("skipCounter").innerText=
-"Пропуснати: "+skipped
-
-}
-
-function grade(score){
-
-if(score>=90)return 6
-if(score>=75)return 5
-if(score>=60)return 4
-if(score>=40)return 3
-return 2
-
-}
-
-function feedback(g){
-
-if(g==6)return "🌟 Отлично! Ти си експерт!"
-if(g==5)return "🔥 Много добре!"
-if(g==4)return "👍 Добра работа!"
-if(g==3)return "🙂 Може по-добре!"
-return "😅 Тренирай още!"
-
-}
-
-function tier(xp){
-
-if(xp<200)return "Bronze"
-if(xp<500)return "Silver"
-if(xp<1000)return "Gold"
-if(xp<2000)return "Diamond"
-return "Legend"
-
-}
-
-function finish(){
-
-saveAnswer()
-
-let right=0
-
-for(let i=0;i<TOTAL;i++){
-
-if(
-answers[i].toUpperCase()==
-correct[i].toUpperCase()
-){
-right++
-}
-
-}
-
-let percent=Math.round((right/TOTAL)*100)
-
-let g=grade(percent)
-
-let gained=right*10
-
-xp+=gained
-
-localStorage.setItem("romanXP",xp)
-
-document.getElementById("testCard").style.display="none"
-document.getElementById("resultCard").style.display="block"
-
-document.getElementById("grade").innerText=g
-document.getElementById("scoreMessage").innerText=feedback(g)
-
-document.getElementById("score").innerText=
-`Правилни: ${right} / ${TOTAL}`
-
-document.getElementById("xp").innerText=
-`XP: ${xp}`
-
-document.getElementById("tier").innerText=
-`Tier: ${tier(xp)}`
-
-let tierLevels=[0,200,500,1000,2000,5000]
-
-let next=tierLevels.find(v=>v>xp)
-
-let prev=tierLevels[tierLevels.indexOf(next)-1]||0
-
-let xpPercent=((xp-prev)/(next-prev))*100
-
-document.getElementById("xpFill").style.width=
-xpPercent+"%"
-
-alert(`🎉 Поздравления!
-Ти завърши Ниво ${currentLevel}!`)
-
-}
-
-function shareLink(){
-
-let grade=document.getElementById("grade").innerText
-
-navigator.clipboard.writeText(
-`Получих оценка ${grade} на теста за римски цифри!`
-)
-
-alert("Резултатът е копиран!")
-
-}
-
-function shareImage(){
-
-html2canvas(document.getElementById("resultCard"))
-.then(canvas=>{
-
-let link=document.createElement("a")
-
-link.download="roman-score.png"
-link.href=canvas.toDataURL()
-
-link.click()
-
-})
-
-}
-
-window.onbeforeunload=function(){
-
-if(started){
-return "Сигурен ли си че искаш да напуснеш теста?"
-}
-
-}
-
-</script>
-
+    <site-header></site-header>
+
+    <div class="wiki-container">
+        <h1 class="test-title">🏛 Тест: Римски цифри</h1>
+
+        <!-- START SCREEN -->
+        <div class="card start-card" id="startCard">
+            <div class="input-group">
+                <label class="label-text">Как да те наричаме?</label>
+                <input id="playerName" type="text" placeholder="Напиши име">
+            </div>
+            <div id="welcomeBack"></div>
+            <div class="level-grid">
+                <button onclick="startTest(1)">📜 Ниво 1 – История</button>
+                <button onclick="startTest(2)">🔢 Ниво 2 – Основи</button>
+                <button onclick="startTest(3)">🧠 Ниво 3 – Смесени</button>
+                <button onclick="startTest(4)">🔥 Ниво 4 – Трудно</button>
+            </div>
+        </div>
+
+        <!-- TEST -->
+        <div class="card" id="testCard" style="display:none">
+            <p id="progress"></p>
+            <div class="progress-bar">
+                <div id="progressFill"></div>
+            </div>
+            <p id="skipCounter">Пропуснати: 0</p>
+            <h2 id="question"></h2>
+            <div class="answer-options">
+                <button class="option" data-answer="A"></button>
+                <button class="option" data-answer="B"></button>
+                <button class="option" data-answer="C"></button>
+                <button class="option" data-answer="D"></button>
+            </div>
+            <div class="nav-buttons">
+                <button onclick="prev()">Назад</button>
+                <button onclick="next()">Напред</button>
+                <button onclick="finish()">Завърши</button>
+            </div>
+        </div>
+
+        <!-- RESULTS -->
+        <div class="card result-card" id="resultCard" style="display:none">
+            <h1 class="score-big" id="grade"></h1>
+            <p class="score-message" id="scoreMessage"></p>
+            <p id="score"></p>
+            <hr>
+            <h3>XP</h3>
+            <div class="xp-bar">
+                <div id="xpFill"></div>
+            </div>
+            <p id="xp"></p>
+            <p id="tier"></p>
+            <hr>
+            <h3>Сподели резултата</h3>
+
+        </div>
+    </div>
+
+    <site-footer></site-footer>
 </body>
+<!-- REPLACE your entire <script> block with this -->
+<!-- REPLACE your entire <script> block with this -->
+<!-- REPLACE your entire <script> block with this -->
+<!-- REPLACE your entire <script> block with this -->
+<!-- REPLACE your entire <script> block with this -->
+<!-- REPLACE your entire <script> block with this -->
+<script>
+/* ══════════════════════════════════════
+   PASTE YOUR GROQ KEY HERE
+   Free at: console.groq.com
+   ══════════════════════════════════════ */
+var GROQ_KEY = "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";
+
+var TOTAL = 15;
+var index = 0, answers = [], questions = [], correct = [], choices = [];
+var started = false, currentLevel = 1;
+var xp = parseInt(localStorage.getItem("romanXP")) || 0;
+var highscore = parseInt(localStorage.getItem("romanHighscore")) || 0;
+var player = localStorage.getItem("romanPlayer");
+if (player) document.getElementById("welcomeBack").innerText = "Здравей " + player + "! Готов ли си за още? 🚀";
+
+/* ─── STYLES ─── */
+var styleEl = document.createElement("style");
+document.head.appendChild(styleEl);
+var sheet = styleEl.sheet;
+var cssRules = [
+  '[id="aiLoader"]{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;background:#fff;opacity:0;pointer-events:none;transition:opacity .3s ease;}',
+  '[id="aiLoader"].on{opacity:1;pointer-events:all;}',
+  '.prime-burst-wrap{position:relative;width:160px;height:160px;display:flex;align-items:center;justify-content:center;}',
+  '.prime-burst{position:absolute;inset:0;animation:burstSpin 3s linear infinite;}',
+  '.prime-burst-inner{position:absolute;inset:20px;animation:burstSpin 2s linear infinite reverse;}',
+  '@keyframes burstSpin{to{transform:rotate(360deg);}}',
+  '.prime-center{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;}',
+  '.prime-ai-text{font-family:Georgia,serif;font-size:1.5rem;font-weight:900;background:linear-gradient(135deg,#0066ff,#00aaff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}',
+  '.prime-ai-sub{font-size:.55rem;font-weight:800;letter-spacing:.25em;text-transform:uppercase;color:#0066ff;opacity:.6;margin-top:2px;}',
+  '.prime-brand{font-family:Georgia,serif;font-size:1.6rem;font-weight:900;letter-spacing:-.03em;background:linear-gradient(135deg,#0055ee,#00bbff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}',
+  '.prime-brand span{font-size:.9rem;font-weight:400;letter-spacing:.1em;color:#aaa;-webkit-text-fill-color:#aaa;}',
+  '.prime-status{font-family:"Courier New",monospace;font-size:.78rem;font-weight:700;letter-spacing:.08em;color:#0066ff;text-align:center;}',
+  '.prime-track{width:200px;height:4px;background:#e8f0ff;border-radius:99px;overflow:hidden;}',
+  '.prime-fill{height:100%;width:0%;background:linear-gradient(90deg,#0055ee,#00bbff);border-radius:99px;transition:width .4s ease;}',
+  '.review-section{margin-top:2rem;}',
+  '.review-section h2{font-size:1.1rem;font-weight:700;margin-bottom:1.2rem;color:var(--text);}',
+  '.review-item{border-radius:16px;border:1.5px solid var(--border);background:var(--card);padding:1.2rem 1.4rem;margin-bottom:1rem;}',
+  '.review-item.correct-item{border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.04);}',
+  '.review-item.wrong-item{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.04);}',
+  '.review-q{font-size:.95rem;font-weight:600;color:var(--text);margin-bottom:.7rem;line-height:1.45;}',
+  '.review-answers{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.85rem;}',
+  '@media(max-width:500px){.review-answers{grid-template-columns:1fr;}}',
+  '.review-chip{padding:.45rem .85rem;border-radius:10px;font-size:.82rem;font-weight:600;border:1.5px solid var(--border);color:var(--muted);background:transparent;}',
+  '.review-chip.chip-correct{border-color:rgba(34,197,94,.6);color:#16a34a;background:rgba(34,197,94,.08);}',
+  '.review-chip.chip-wrong{border-color:rgba(239,68,68,.5);color:#dc2626;background:rgba(239,68,68,.07);text-decoration:line-through;}',
+  '.review-chip.chip-selected-correct{border-color:#16a34a;color:#fff;background:#22c55e;}',
+  '.review-chip.chip-selected-wrong{border-color:#dc2626;color:#fff;background:#ef4444;}',
+  '.review-verdict{font-size:.8rem;font-weight:700;margin-bottom:.6rem;}',
+  '.verdict-correct{color:#16a34a;}',
+  '.verdict-wrong{color:#dc2626;}',
+  '.review-explain{font-size:.82rem;color:var(--muted);line-height:1.6;padding:.7rem 1rem;border-radius:10px;background:rgba(0,122,255,.05);border-left:3px solid var(--primary);margin-top:.5rem;min-height:2.5rem;}',
+  '.explain-loading{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--muted);font-style:italic;}',
+  '.explain-dot{width:5px;height:5px;border-radius:50%;background:var(--primary);animation:edot .9s ease-in-out infinite;}',
+  '.explain-dot:nth-child(2){animation-delay:.2s;}',
+  '.explain-dot:nth-child(3){animation-delay:.4s;}',
+  '@keyframes edot{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}',
+  '.result-actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.5rem;}',
+  '.btn-primary{flex:1;min-width:140px;padding:.8rem 1.2rem;font-size:.92rem;font-weight:700;border-radius:14px;border:none;background:var(--primary);color:#fff;cursor:pointer;transition:opacity .2s,transform .15s;}',
+  '.btn-primary:hover{opacity:.88;transform:translateY(-2px);}',
+  '.btn-secondary{flex:1;min-width:140px;padding:.8rem 1.2rem;font-size:.92rem;font-weight:700;border-radius:14px;border:2px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;transition:background .2s,border-color .2s,transform .15s;}',
+  '.btn-secondary:hover{border-color:var(--primary);color:var(--primary);transform:translateY(-2px);}',
+  '.q-number{display:inline-block;font-size:.7rem;font-weight:800;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:.4rem;}',
+];
+cssRules.forEach(function(r) { try { sheet.insertRule(r, sheet.cssRules.length); } catch(e){} });
+
+/* ─── STARBURST LOADER ─── */
+function starburstPath(cx, cy, r, points, ratio) {
+  var d = "", total = points * 2;
+  for (var k = 0; k < total; k++) {
+    var angle = (Math.PI / points) * k - Math.PI / 2;
+    var rad = (k % 2 === 0) ? r : r * ratio;
+    var x = (cx + Math.cos(angle) * rad).toFixed(2);
+    var y = (cy + Math.sin(angle) * rad).toFixed(2);
+    d += (k === 0 ? "M" : "L") + x + " " + y + " ";
+  }
+  return d + "Z";
+}
+
+var loaderEl = document.createElement("div");
+loaderEl.id = "aiLoader";
+var op = starburstPath(80, 80, 76, 14, 0.82);
+var ip = starburstPath(60, 60, 56, 10, 0.78);
+loaderEl.innerHTML =
+  '<div class="prime-burst-wrap">' +
+    '<svg class="prime-burst" width="160" height="160" viewBox="0 0 160 160" fill="none">' +
+      '<path d="' + op + '" fill="none" stroke="url(#sb1)" stroke-width="3" stroke-linejoin="round"/>' +
+      '<defs><linearGradient id="sb1" x1="0" y1="0" x2="160" y2="160" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#0055ee"/><stop offset="100%" stop-color="#00ccff"/></linearGradient></defs>' +
+    '</svg>' +
+    '<svg class="prime-burst-inner" width="120" height="120" viewBox="0 0 120 120" fill="none" style="position:absolute;inset:20px;">' +
+      '<path d="' + ip + '" fill="none" stroke="url(#sb2)" stroke-width="2" stroke-linejoin="round" opacity=".5"/>' +
+      '<defs><linearGradient id="sb2" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#00aaff"/><stop offset="100%" stop-color="#0055ee"/></linearGradient></defs>' +
+    '</svg>' +
+    '<div class="prime-center"><div class="prime-ai-text">AI</div><div class="prime-ai-sub">Prime</div></div>' +
+  '</div>' +
+  '<div class="prime-brand">Prime<span>AI</span></div>' +
+  '<div class="prime-status" id="loaderStatus">Инициализиране...</div>' +
+  '<div class="prime-track"><div class="prime-fill" id="loaderFill"></div></div>';
+document.body.appendChild(loaderEl);
+
+function showLoader() { loaderEl.classList.add("on"); setLoaderPct(0); }
+function hideLoader() { loaderEl.classList.remove("on"); }
+function setLoaderStatus(t) { document.getElementById("loaderStatus").innerText = t; }
+function setLoaderPct(p) { document.getElementById("loaderFill").style.width = Math.min(p,100) + "%"; }
+
+/* ─── HELPERS ─── */
+function toRoman(n) {
+  var m = [[1000,"M"],[900,"CM"],[500,"D"],[400,"CD"],[100,"C"],[90,"XC"],[50,"L"],[40,"XL"],[10,"X"],[9,"IX"],[5,"V"],[4,"IV"],[1,"I"]];
+  var r = "";
+  for (var i = 0; i < m.length; i++) { while (n >= m[i][0]) { r += m[i][1]; n -= m[i][0]; } }
+  return r;
+}
+function shuffle(a) {
+  for (var i = a.length-1; i > 0; i--) { var j = Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+  return a;
+}
+function sleep(ms) { return new Promise(function(r){ setTimeout(r, ms); }); }
+
+/* ─── KNOWLEDGE ─── */
+var KNOWLEDGE =
+  "Roman numerals: non-positional numeral system from Ancient Rome.\n" +
+  "7 symbols: I=1, V=5, X=10, L=50, C=100, D=500, M=1000.\n" +
+  "Addition rule: symbol right of a larger = added. Example: VI=6.\n" +
+  "Subtraction rule: symbol left of a larger = subtracted. Example: IV=4.\n" +
+  "I,X,C,M repeat max 3 times. V,L,D only once ever.\n" +
+  "Subtraction only: IV=4, IX=9, XL=40, XC=90, CD=400, CM=900.\n" +
+  "Range 1-3999. Zero does not exist. Replaced by Arabic numerals after 1400 AD.\n" +
+  "Origin: Etruscans, spread by Romans.\n" +
+  "Used today: centuries (XXI), rulers (Simeon II), clocks (4=IIII sometimes), Olympics, Super Bowl, books.\n" +
+  "Examples: XVI=16, XIV=14, XC=90, XL=40, MMXXIV=2024, MCMXCIX=1999.\n";
+
+var LEVEL_PROMPTS = {
+  1: "Generate 15 questions about Roman numeral history and rules. Write question text in simple correct Bulgarian. Cover: origins (Etruscans), all 7 symbols, subtraction rule, repetition limits, zero not existing, modern usage (clocks, Olympics, centuries, rulers). Each question different topic.",
+  2: "Generate 15 questions: student converts Arabic number to Roman numeral. Write question in Bulgarian like 'Запиши числото 40 с римски цифри:'. Use numbers 1-399, include tricky ones near 4,9,40,90,400. Wrong answers: plausible wrong Roman numerals for nearby numbers.",
+  3: "Generate 15 mixed questions in Bulgarian. Half: Roman to Arabic (e.g. 'Колко е XIV?'). Half: Arabic to Roman (e.g. 'Запиши 40 с римски цифри:'). Numbers 1-399. Wrong answers close but wrong.",
+  4: "Generate 15 hard questions in Bulgarian. Mix: which Roman numeral is bigger, addition (XIV + 5 = ?), subtraction (XX - 3 = ?), count symbols in a Roman numeral, what comes before/after. Numbers 1-300."
+};
+
+/* ─── GROQ CALL ─── */
+function callAI(prompt, maxTokens) {
+  maxTokens = maxTokens || 800;
+  return fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY },
+    body: JSON.stringify({
+      model: "llama-3.1-8b-instant",
+      max_tokens: maxTokens,
+      temperature: 0.2,
+      messages: [
+        { role: "system", content: "You follow instructions exactly. Never output JSON for explanation tasks. Never invent facts outside the knowledge base." },
+        { role: "user", content: prompt }
+      ]
+    })
+  }).then(function(r) {
+    if (!r.ok) throw new Error("API " + r.status);
+    return r.json();
+  }).then(function(d) {
+    return d.choices[0].message.content;
+  });
+}
+
+/* ─── EXTRACT JSON SAFELY ─── */
+function extractJSON(raw) {
+  var s = raw.replace(/```json/gi,"").replace(/```/gi,"").trim();
+  var a = s.indexOf("["), b = s.lastIndexOf("]");
+  if (a === -1 || b === -1) throw new Error("No JSON array");
+  return s.slice(a, b+1);
+}
+
+/* ─── CLEAN EXPLANATION TEXT ─── */
+function cleanExplanation(raw) {
+  var text = raw.trim();
+
+  /* if Llama returned JSON object, extract sentences from it */
+  if (text.charAt(0) === "{" || text.charAt(0) === "[") {
+    try {
+      var obj = JSON.parse(text);
+      var vals = [];
+      function collectStrings(o) {
+        if (typeof o === "string" && o.length > 5) vals.push(o);
+        else if (Array.isArray(o)) { for (var i=0;i<o.length;i++) collectStrings(o[i]); }
+        else if (typeof o === "object" && o !== null) { var ks=Object.keys(o); for (var i=0;i<ks.length;i++) collectStrings(o[ks[i]]); }
+      }
+      collectStrings(obj);
+      text = vals.join(" ");
+    } catch(e) {
+      /* strip braces/brackets and JSON keys */
+      text = text.replace(/[{}\[\]"]/g,"")
+                 .replace(/\b(question|correct_answer|student_answer|was_correct|feedback|explanation|message|sentence_\d):/gi,"")
+                 .trim();
+    }
+  }
+
+  /* translate English words that slip through */
+  var fixes = [
+    ["Etruscans","Етруски"], ["etruscans","Етруски"],
+    ["Romans","Римляните"], ["romans","Римляните"],
+    ["Non-positional","непозиционна"], ["non-positional","непозиционна"],
+    ["positional","позиционна"], ["Roman numerals","римски цифри"],
+    ["correct","правилно"], ["incorrect","грешно"],
+    ["zero","нула"], ["symbols","символи"], ["symbol","символ"]
+  ];
+  for (var fi=0; fi<fixes.length; fi++) {
+    text = text.split(fixes[fi][0]).join(fixes[fi][1]);
+  }
+
+  return text.trim();
+}
+
+/* ─── GENERATE QUESTIONS ─── */
+function generateWithAI(level) {
+  var prompt =
+    "Knowledge base:\n" + KNOWLEDGE +
+    "\nTask: " + LEVEL_PROMPTS[level] +
+    "\n\nRULES:\n" +
+    "- Question text in simple correct Bulgarian\n" +
+    "- Exactly 15 questions, no repeated topics\n" +
+    "- Each: 1 correct answer + exactly 3 wrong plausible answers\n" +
+    "- Output ONLY the JSON array. Start with [ end with ]. Nothing else.\n\n" +
+    'Format: [{"q":"Bulgarian question","a":"correct answer","w":["wrong1","wrong2","wrong3"]},...]';
+
+  return callAI(prompt, 2000).then(function(raw) {
+    var parsed = JSON.parse(extractJSON(raw));
+    var valid = [];
+    for (var vi=0; vi<parsed.length; vi++) {
+      var item = parsed[vi];
+      if (item.q && item.a && Array.isArray(item.w) && item.w.length >= 3 && item.q.length < 200) {
+        valid.push(item);
+      }
+    }
+    if (valid.length < 10) throw new Error("Too few valid questions");
+    return valid;
+  });
+}
+
+/* ─── START TEST ─── */
+function startTest(level) {
+  var name = document.getElementById("playerName").value.trim();
+  if (!name) {
+    if (player) name = player;
+    else { alert("Моля въведи име"); return; }
+  }
+  localStorage.setItem("romanPlayer", name);
+  currentLevel = level; index = 0;
+  answers = []; questions = []; correct = []; choices = [];
+  showLoader();
+
+  var pct = 0;
+  var prog = setInterval(function(){ pct = Math.min(pct+1.5, 88); setLoaderPct(pct); }, 80);
+  var stats = ["Свързване с PrimeAI...","Анализиране на ниво "+level+"...","Генериране на въпроси...","Финализиране..."];
+  var si = 0;
+  setLoaderStatus(stats[0]);
+  var statT = setInterval(function(){ si=(si+1)%stats.length; setLoaderStatus(stats[si]); }, 1400);
+
+  generateWithAI(level).then(function(items) {
+    clearInterval(prog); clearInterval(statT);
+    setLoaderPct(100); setLoaderStatus("Готово ✓");
+    return sleep(500).then(function(){
+      for (var ii=0; ii<items.length; ii++) {
+        questions.push(items[ii].q);
+        correct.push(items[ii].a);
+        choices.push(shuffle([items[ii].a, items[ii].w[0], items[ii].w[1], items[ii].w[2]]));
+      }
+      answers = new Array(questions.length).fill("");
+      started = true;
+      hideLoader();
+      document.getElementById("startCard").style.display = "none";
+      document.getElementById("testCard").style.display = "block";
+      show();
+    });
+  }).catch(function(err) {
+    clearInterval(prog); clearInterval(statT);
+    console.error("PrimeAI:", err);
+    setLoaderStatus("Резервен режим...");
+    setLoaderPct(100);
+    sleep(600).then(function(){
+      fallback(level);
+      answers = new Array(questions.length).fill("");
+      started = true;
+      hideLoader();
+      document.getElementById("startCard").style.display = "none";
+      document.getElementById("testCard").style.display = "block";
+      show();
+    });
+  });
+}
+
+/* ─── FALLBACK ─── */
+function fallback(level) {
+  if (level === 1) {
+    var bank = [
+      {q:"Какъв тип бройна система са римските цифри?",a:"Непозиционна",w:["Позиционна","Двоична","Шестнадесетична"]},
+      {q:"Коя буква означава 5?",a:"V",w:["I","X","L"]},
+      {q:"Коя буква означава 10?",a:"X",w:["V","L","C"]},
+      {q:"Коя буква означава 50?",a:"L",w:["X","C","D"]},
+      {q:"Коя буква означава 100?",a:"C",w:["L","D","M"]},
+      {q:"Коя буква означава 500?",a:"D",w:["C","L","M"]},
+      {q:"Коя буква означава 1000?",a:"M",w:["D","C","L"]},
+      {q:"Как се записва 4 с римски цифри?",a:"IV",w:["IIII","VI","IIV"]},
+      {q:"Как се записва 9 с римски цифри?",a:"IX",w:["VIIII","XI","IIX"]},
+      {q:"Колко основни символа има системата?",a:"7",w:["5","9","10"]},
+      {q:"Нулата съществува ли в римската система?",a:"Не",w:["Да — O","Да — Z","Да — N"]},
+      {q:"Кой народ е създал римските цифри?",a:"Етруски",w:["Гърци","Египтяни","Перси"]},
+      {q:"Как се записва 2024 с римски цифри?",a:"MMXXIV",w:["MMXXVI","MMXIV","MMXXIIII"]},
+      {q:"Кое число е XIV?",a:"14",w:["16","11","40"]},
+      {q:"Може ли V да се повтаря повече от веднъж?",a:"Не",w:["Да, до 2 пъти","Да, до 3 пъти","Да, без ограничение"]},
+    ];
+    shuffle(bank).slice(0,TOTAL).forEach(function(x){
+      questions.push(x.q); correct.push(x.a); choices.push(shuffle([x.a,x.w[0],x.w[1],x.w[2]]));
+    });
+    return;
+  }
+  for (var fi=0; fi<TOTAL; fi++) {
+    var n = Math.floor(Math.random()*198)+2, r = toRoman(n), ws=[];
+    while (ws.length<3) { var d=Math.floor(Math.random()*10)+1, w=toRoman(n+(Math.random()<.5?d:-d)); if(w&&w!==r&&ws.indexOf(w)===-1) ws.push(w); }
+    questions.push("Запиши "+n+" с римски цифри:"); correct.push(r); choices.push(shuffle([r,ws[0],ws[1],ws[2]]));
+  }
+}
+
+/* ─── DISPLAY ─── */
+function show() {
+  document.getElementById("progress").innerText = "Въпрос "+(index+1)+" / "+questions.length;
+  document.getElementById("question").innerText = questions[index];
+  document.getElementById("progressFill").style.width = ((index+1)/questions.length*100)+"%";
+  updateSkipped(); renderOptions();
+}
+function renderOptions() {
+  var btns = document.querySelectorAll(".option"), opts = choices[index]||[];
+  for (var oi=0; oi<btns.length; oi++) {
+    (function(btn, opt){
+      btn.innerText = opt||"—"; btn.className = "option";
+      if (answers[index]===opt) btn.classList.add("selected");
+      btn.onclick = function(){ selectAnswer(opt); };
+    })(btns[oi], opts[oi]);
+  }
+}
+function selectAnswer(v) {
+  answers[index]=v;
+  var btns=document.querySelectorAll(".option");
+  for(var i=0;i<btns.length;i++) btns[i].classList.toggle("selected", btns[i].innerText===v);
+  updateSkipped();
+}
+function next(){ if(index<questions.length-1){index++;show();}else{finish();} }
+function prev(){ if(index>0){index--;show();} }
+function updateSkipped(){
+  var s=0; for(var i=0;i<answers.length;i++){if(answers[i]==="")s++;}
+  document.getElementById("skipCounter").innerText="Пропуснати: "+s;
+}
+
+/* ─── GRADING ─── */
+function grade(s){return s>=90?6:s>=75?5:s>=60?4:s>=40?3:2;}
+function feedback(g){return["","","😅 Тренирай още!","🙂 Може по-добре!","👍 Добра работа!","🔥 Много добре!","🌟 Отлично! Ти си експерт!"][g];}
+function getTier(v){return v<200?"🥉 Bronze":v<500?"🥈 Silver":v<1000?"🥇 Gold":v<2000?"💎 Diamond":"🏆 Legend";}
+
+/* ─── FINISH ─── */
+function finish() {
+  started = false;
+  var right=0, total=questions.length;
+  for(var ri=0;ri<total;ri++){if((answers[ri]||"").toUpperCase()===(correct[ri]||"").toUpperCase())right++;}
+  var pct=Math.round(right/total*100), g=grade(pct), gained=right*10;
+  xp+=gained; highscore=Math.max(highscore,xp);
+  localStorage.setItem("romanXP",xp); localStorage.setItem("romanHighscore",highscore);
+
+  document.getElementById("testCard").style.display="none";
+  var rc=document.getElementById("resultCard"); rc.style.display="block";
+  document.getElementById("grade").innerText=g;
+  document.getElementById("scoreMessage").innerText=feedback(g);
+  document.getElementById("score").innerText="Правилни: "+right+" / "+total+" ("+pct+"%)";
+  document.getElementById("xp").innerText="XP: "+xp+"  (+"+gained+")";
+  document.getElementById("tier").innerText="Tier: "+getTier(xp);
+  var tiers=[0,200,500,1000,2000,5000], nx=5000;
+  for(var ti=0;ti<tiers.length;ti++){if(tiers[ti]>xp){nx=tiers[ti];break;}}
+  var pv=tiers[tiers.indexOf(nx)-1]||0;
+  document.getElementById("xpFill").style.width=Math.min((xp-pv)/(nx-pv)*100,100)+"%";
+
+  /* buttons */
+  var actEl=document.getElementById("resultActions");
+  if(!actEl){
+    actEl=document.createElement("div"); actEl.id="resultActions"; actEl.className="result-actions";
+    actEl.innerHTML='<button class="btn-primary" onclick="tryAnother()">🔄 Опитай отново</button>'+
+      '<button class="btn-secondary" onclick="shareLink()">📋 Копирай резултат</button>'+
+      '<button class="btn-secondary" onclick="shareImage()">🖼 Изтегли снимка</button>';
+    rc.appendChild(actEl);
+  }
+
+  /* review */
+  var revEl=document.getElementById("reviewSection");
+  if(!revEl){revEl=document.createElement("div");revEl.id="reviewSection";revEl.className="review-section";rc.appendChild(revEl);}
+  revEl.innerHTML="<h2>📋 Преглед на въпросите</h2>";
+
+  for(var qi=0;qi<total;qi++){
+    var ua=answers[qi]||"", ic=ua.toUpperCase()===correct[qi].toUpperCase();
+    var chips="", opts=choices[qi]||[correct[qi]];
+    for(var ci=0;ci<opts.length;ci++){
+      var o=opts[ci], isc=o.toUpperCase()===correct[qi].toUpperCase(), isu=o.toUpperCase()===ua.toUpperCase();
+      var cl="review-chip";
+      if(isu&&ic)cl+=" chip-selected-correct";
+      else if(isu&&!ic)cl+=" chip-selected-wrong";
+      else if(isc)cl+=" chip-correct";
+      chips+='<span class="'+cl+'">'+o+'</span>';
+    }
+    var verd=ic?'<span class="verdict-correct">✓ Правилно!</span>':
+      '<span class="verdict-wrong">✗ Грешно — верният отговор: <strong>'+correct[qi]+'</strong>'+(ua?' &nbsp;|&nbsp; Ти отговори: <strong>'+ua+'</strong>':' &nbsp;|&nbsp; Пропуснат')+'</span>';
+    var card=document.createElement("div");
+    card.className="review-item "+(ic?"correct-item":"wrong-item"); card.id="review-card-"+qi;
+    card.innerHTML='<div class="q-number">Въпрос '+(qi+1)+'</div>'+
+      '<div class="review-q">'+questions[qi]+'</div>'+
+      '<div class="review-answers">'+chips+'</div>'+
+      '<div class="review-verdict">'+verd+'</div>'+
+      '<div class="review-explain" id="explain-'+qi+'">'+
+        '<div class="explain-loading"><div class="explain-dot"></div><div class="explain-dot"></div><div class="explain-dot"></div><span>PrimeAI обяснява...</span></div>'+
+      '</div>';
+    revEl.appendChild(card);
+  }
+
+  /* chain explanations one by one */
+  var chain=Promise.resolve();
+  for(var ei=0;ei<total;ei++){
+    (function(idx){
+      chain=chain.then(function(){ return fetchExplanation(idx); });
+    })(ei);
+  }
+}
+
+/* ─── EXPLANATION ─── */
+function fetchExplanation(i) {
+  var ua=answers[i]||"не е отговорено", ic=ua.toUpperCase()===correct[i].toUpperCase();
+  var el=document.getElementById("explain-"+i);
+  if(!el) return Promise.resolve();
+
+  var prompt =
+    "Ти си приятелски учител по математика, който обяснява на ученик на 10 години.\n" +
+    "Знания: " + KNOWLEDGE +
+    "\nВъпрос: " + questions[i] +
+    "\nПравилен отговор: " + correct[i] +
+    "\nУченикът отговори: " + ua +
+    "\n\nНапиши точно 2 изречения на български, обръщайки се към ученика с 'ти'.\n" +
+    "Изречение 1: " + (ic ? "Започни с 'Браво!' и потвърди правилния отговор просто." : "Започни с 'Не точно!' и кажи кой е правилният отговор.") + "\n" +
+    "Изречение 2: Обясни ЗАЩО с прости думи, разбираеми за дете.\n" +
+    "ЗАБРАНИ: Не казвай 'ученикът', 'учащият', не използвай JSON, не използвай markdown.\n" +
+    "Максимум 40 думи. Само обикновен текст.\n" +
+    "Пример за добър отговор: 'Браво! V наистина означава 5 в римските цифри. Това е един от седемте основни символа, които трябва да запомниш!'";
+
+  return callAI(prompt, 250).then(function(raw) {
+    el.innerText = cleanExplanation(raw);
+  }).catch(function() {
+    el.innerText = ic
+      ? "Браво! Верният отговор е " + correct[i] + "."
+      : "Не точно! Верният отговор е " + correct[i] + ". Провери правилата за римски цифри.";
+  });
+}
+
+/* ─── CLEAN EXPLANATION (handles JSON fallback) ─── */
+function cleanExplanation(raw) {
+  var text = raw.trim();
+  if (text.charAt(0) === "{" || text.charAt(0) === "[") {
+    try {
+      var obj = JSON.parse(text), vals = [];
+      function collect(o) {
+        if (typeof o === "string" && o.length > 5) vals.push(o);
+        else if (Array.isArray(o)) { for(var i=0;i<o.length;i++) collect(o[i]); }
+        else if (o && typeof o==="object") { var ks=Object.keys(o); for(var i=0;i<ks.length;i++) collect(o[ks[i]]); }
+      }
+      collect(obj); text = vals.join(" ");
+    } catch(e) {
+      text = text.replace(/[{}\[\]"]/g,"").replace(/\b\w+_?\w*:/g,"").trim();
+    }
+  }
+  var fixes=[["Etruscans","Етруски"],["etruscans","Етруски"],["Romans","Римляните"],
+    ["Non-positional","непозиционна"],["Roman numerals","римски цифри"],["zero","нула"]];
+  for(var fi=0;fi<fixes.length;fi++) text=text.split(fixes[fi][0]).join(fixes[fi][1]);
+  return text.trim();
+}
+
+/* ─── TRY ANOTHER ─── */
+function tryAnother() {
+  document.getElementById("resultCard").style.display="none";
+  var a=document.getElementById("resultActions"), r=document.getElementById("reviewSection");
+  if(a)a.remove(); if(r)r.remove();
+  document.getElementById("startCard").style.display="block";
+}
+
+/* ─── SHARE ─── */
+function shareLink(){
+  var g=document.getElementById("grade").innerText;
+  navigator.clipboard.writeText("Получих оценка "+g+" на теста за римски цифри! 🏛");
+  alert("Копирано!");
+}
+function shareImage(){
+  html2canvas(document.getElementById("resultCard")).then(function(c){
+    var a=document.createElement("a"); a.download="roman-score.png"; a.href=c.toDataURL(); a.click();
+  });
+}
+
+window.onbeforeunload = function(){ if(started) return "Сигурен ли си?"; };
+</script>
 </html>
